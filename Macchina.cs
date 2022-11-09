@@ -1,26 +1,21 @@
 ﻿
 // il sistema di controllo è il program.cs
 
+
 public abstract class Macchina
 {
     public Programma[] Programmi { get; protected set; }
 
-    public Programma ProgrammaInEsecuzione { get; protected set; }
+    public Programma ProgrammaSelezionato { get; protected set; }
 
-    public int tempoRimanente;
+    private int tempoRimanente;
 
     public Macchina(int numeroProgrammi)
     {
         Programmi = new Programma[numeroProgrammi];
     }
 
-    public bool InFunzione
-    {
-        get
-        {
-            return ProgrammaInEsecuzione != null;
-        }
-    }
+    public bool InFunzione { get; protected set; }
 
     public int GettoniInseriti { get; protected set; }
 
@@ -44,7 +39,8 @@ public abstract class Macchina
             if (value == 0)
             {
                 tempoRimanente = 0;
-                ProgrammaInEsecuzione = null;
+                InFunzione = false;
+                //ProgrammaSelezionato = null;
             }
             else
             {
@@ -53,6 +49,9 @@ public abstract class Macchina
         }
 
     }
+
+
+    public abstract bool AvviaProgramma();
 
     //selezione e avvio
     public bool SelezionaProgramma(int numeroProgramma)
@@ -70,13 +69,42 @@ public abstract class Macchina
         }
 
         //recupero il programma
-        Programma programmaSelezionato = Programmi[numeroProgramma - 1];
+        //programma dell'utente - 1 
+        ProgrammaSelezionato = Programmi[numeroProgramma - 1];
 
         return true;
-    
     }
 
-    public abstract bool AvviaProgramma();
+    public bool Simulazione(bool init = false)
+    {
+        if(ProgrammaSelezionato == null)
+        {
+            return false;
+        }
+
+        //per il momento casuale
+        //lo metto alla fine perchè c'è un comportamento su SET che rende null il programma
+        if (init)//la situazioe iniziale
+            TempoRimanente = new Random().Next(1, ProgrammaSelezionato.Durata + 1);
+        else//situazione intermedia... il tempo scorre durante il lavaggio
+            TempoRimanente = new Random().Next(0,TempoRimanente);
+
+        return true;
+    }
+
+
+    public virtual void StampaDettaglio()
+    {
+        StampaStato();
+
+        if (InFunzione)
+        {
+            Console.WriteLine("Programma in esecuzione: {0}", ProgrammaSelezionato.Nome);
+            Console.WriteLine("Tempo rimanente: {0}", TempoRimanente);
+        }
+
+        
+    }
 
     public void StampaStato()
     {

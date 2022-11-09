@@ -17,16 +17,37 @@ public class Lavatrice : Macchina
 
     }
 
-    public void StampaDettaglio()
+
+    public override bool AvviaProgramma()
+    {
+
+        if (
+           !Detersivo.Disponibile(ProgrammaSelezionato.ConsumoDetersivo) ||
+           !Ammorbidente.Disponibile(ProgrammaSelezionato.ConsumoAmmorbidente))
+        {
+            InFunzione = false;
+            return false;
+        }
+
+        InFunzione = true;
+
+        GettoniInseriti += ProgrammaSelezionato.NumeroGettoni;
+        Detersivo.Consuma(ProgrammaSelezionato.ConsumoDetersivo);
+        Ammorbidente.Consuma(ProgrammaSelezionato.ConsumoAmmorbidente);
+
+        //inizializzo sul tempo del programma
+        Simulazione(true);
+
+        return true;
+
+    }
+
+    public override void StampaDettaglio()
     {
         StampaStato();
 
-        if (InFunzione)
-        {
-            Console.WriteLine("Programma in esecuzione: {0}", ProgrammaInEsecuzione.Nome);
-            Console.WriteLine("Tempo rimanente: {0}", TempoRimanente);
-        }
-       
+        base.StampaDettaglio();
+
         Console.WriteLine("Ammorbidente disponibile: {0}", Ammorbidente.Livello);
         Console.WriteLine("Detersivo disponibile: {0}", Detersivo.Livello);
         Console.WriteLine("Numero Gettoni: {0}", GettoniInseriti);

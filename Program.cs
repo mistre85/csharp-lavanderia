@@ -1,4 +1,82 @@
 ﻿
-using csharp_lavanderia;
+// il sistema di controllo è il program.cs
 
-Console.WriteLine("Simulatore lavanderia 24h");
+Lavanderia lav = new Lavanderia();
+
+bool menu = true;
+
+while (menu)
+{
+    Console.Clear();
+
+    Console.WriteLine("Sistema di controllo lavanderia");
+    Console.WriteLine();
+
+    lav.StampaStatoGenerale();
+
+
+    Console.WriteLine("Digita 'reset' per reinizializzare casualmente il sistema.");
+    Console.WriteLine("Per vedere i dettagli delle macchine digita 'l1' per lavatrice 1 o 'a5' per asciugatrice 5.");
+    Console.WriteLine("Digita 'esci' per chiudere il programma.");
+    Console.Write(">");
+
+    string sceltaUtente = Console.ReadLine();
+
+    if (sceltaUtente == "reset") {
+        //lav.Reset();
+        if (!lav.Next())
+        {
+            Console.WriteLine();
+            Console.WriteLine("Premi invio per continuare...");
+            Console.ReadLine();
+        }
+    }
+    else 
+    {
+        if (sceltaUtente.Length == 2)
+        {
+            char macchina = sceltaUtente[0];
+            int numero = Convert.ToInt32(sceltaUtente[1].ToString());
+
+            bool numeroMacchinaEsistente = true;
+
+            Console.Clear();
+
+            switch (macchina)
+            {
+                case 'l':
+                    numeroMacchinaEsistente = lav.StampaDettaglioLavatrice(numero);
+                    break;
+                case 'a':
+                    numeroMacchinaEsistente = lav.StampaDettaglioAsciugatrici(numero);
+                    break;
+                default:
+                    numeroMacchinaEsistente = false;
+                    break;
+
+            }
+
+            if (!numeroMacchinaEsistente)
+            {
+                Console.WriteLine("errore: La macchina indicata non esiste, specificare il nome corretto.");
+
+            }
+
+
+        }
+        else
+        {
+            Console.WriteLine("errore: comando sconosciuto");
+        }
+
+        Console.WriteLine();
+        Console.WriteLine("Premi invio per continuare...");
+        Console.ReadLine();
+
+    }
+
+
+
+
+   
+}
