@@ -4,7 +4,15 @@
 
 public class Asciugatrice : Macchina
 {
-    
+
+    protected override ProgrammaAsciugatura ProgrammaSelezionato
+    {
+        get
+        {
+            return (ProgrammaAsciugatura)base.ProgrammaSelezionato;
+        }
+    }
+
     public Asciugatrice() : base(2)
     {
        Programmi[0] = new ProgrammaAsciugatura("Rapido", 20,2);

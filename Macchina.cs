@@ -4,9 +4,9 @@
 
 public abstract class Macchina
 {
-    public Programma[] Programmi { get; protected set; }
+    protected Programma[] Programmi { get; set; }
 
-    public Programma ProgrammaSelezionato { get; protected set; }
+    protected virtual Programma ProgrammaSelezionato { get; set; }
 
     private int tempoRimanente;
 
@@ -99,7 +99,7 @@ public abstract class Macchina
 
         if (InFunzione)
         {
-            Console.WriteLine("Programma in esecuzione: {0}", ProgrammaSelezionato.Nome);
+            Console.WriteLine(ProgrammaSelezionato.ToString());
             Console.WriteLine("Tempo rimanente: {0}", TempoRimanente);
         }
 

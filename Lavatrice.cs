@@ -6,8 +6,17 @@ public class Lavatrice : Macchina
     public Serbatoio Detersivo { get; private set; }
     public Serbatoio Ammorbidente { get; private set; }
 
+    protected override ProgrammaLavaggio ProgrammaSelezionato
+    {
+        get
+        {
+            return (ProgrammaLavaggio)base.ProgrammaSelezionato;
+        }
+    }
+
     public Lavatrice() : base(3)
     {
+        this.
         Detersivo = new Serbatoio(1000);
         Ammorbidente = new Serbatoio(500);
 
@@ -20,7 +29,7 @@ public class Lavatrice : Macchina
 
     public override bool AvviaProgramma()
     {
-
+        
         if (
            !Detersivo.Disponibile(ProgrammaSelezionato.ConsumoDetersivo) ||
            !Ammorbidente.Disponibile(ProgrammaSelezionato.ConsumoAmmorbidente))

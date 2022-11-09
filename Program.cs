@@ -16,7 +16,7 @@ while (menu)
 
 
     Console.WriteLine("Digita 'reset' per reinizializzare casualmente il sistema.");
-    Console.WriteLine("Per vedere i dettagli delle macchine digita 'l1' per lavatrice 1 o 'a5' per asciugatrice 5.");
+    Console.WriteLine("Per vedere i dettagli delle macchine digita 'm1' per vedere i dettagli della macchina 1");
     Console.WriteLine("Digita 'esci' per chiudere il programma.");
     Console.Write(">");
 
@@ -44,11 +44,8 @@ while (menu)
 
             switch (macchina)
             {
-                case 'l':
-                    numeroMacchinaEsistente = lav.StampaDettaglioLavatrice(numero);
-                    break;
-                case 'a':
-                    numeroMacchinaEsistente = lav.StampaDettaglioAsciugatrici(numero);
+                case 'm':
+                    numeroMacchinaEsistente = lav.StampaDettaglioMacchina(numero);
                     break;
                 default:
                     numeroMacchinaEsistente = false;
