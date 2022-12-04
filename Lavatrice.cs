@@ -1,12 +1,14 @@
 ﻿
 // il sistema di controllo è il program.cs
 
+using csharp_lavanderia.Exceptions;
+
 public class Lavatrice : Macchina
 {   
     public Serbatoio Detersivo { get; private set; }
     public Serbatoio Ammorbidente { get; private set; }
 
-    protected override ProgrammaLavaggio ProgrammaSelezionato
+    public override ProgrammaLavaggio ProgrammaSelezionato
     {
         get
         {
@@ -27,28 +29,53 @@ public class Lavatrice : Macchina
     }
 
 
-    public override bool AvviaProgramma()
+    public override void AvviaProgramma()
     {
-        
-        if (
-           !Detersivo.Disponibile(ProgrammaSelezionato.ConsumoDetersivo) ||
-           !Ammorbidente.Disponibile(ProgrammaSelezionato.ConsumoAmmorbidente))
+
+        if (Aperta)
         {
-            InFunzione = false;
-            return false;
+            throw new MacchinaApertaException();
         }
 
-        InFunzione = true;
+        if (InFunzione)
+        {
+            throw new MacchinaInFunzioneExcption();
+        }
 
-        GettoniInseriti += ProgrammaSelezionato.NumeroGettoni;
+        if (ProgrammaSelezionato == null)
+        {
+            throw new ProgrammaNonSelezionatoException();
+        }
+
+        if(ProgrammaSelezionato.NumeroGettoni > GettoniInseriti)
+        {
+            throw new GettoniInsufficientiException();
+        }
+
+        if (!Detersivo.Disponibile(ProgrammaSelezionato.ConsumoDetersivo))
+        {
+            throw new DetersivoInsufficienteException();
+        }
+
+        if (!Ammorbidente.Disponibile(ProgrammaSelezionato.ConsumoAmmorbidente))
+        {
+            throw new AmmorbidenteInsufficienteException();
+        }
+
+
+        InFunzione = true;
+        GettoniInseriti -= ProgrammaSelezionato.NumeroGettoni;
+
+    }
+
+    public override void Simulazione()
+    {
+        base.Simulazione();
+
         Detersivo.Consuma(ProgrammaSelezionato.ConsumoDetersivo);
         Ammorbidente.Consuma(ProgrammaSelezionato.ConsumoAmmorbidente);
 
-        //inizializzo sul tempo del programma
-        Simulazione(true);
-
-        return true;
-
+        
     }
 
     public override void StampaDettaglio()

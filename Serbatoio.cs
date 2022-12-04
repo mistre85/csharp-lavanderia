@@ -9,6 +9,9 @@ public class Serbatoio
 
     public Serbatoio(int milliletri)
     {
+        if (milliletri < 0)
+            throw new LivelloNegativoSerbatoioExcpetion();
+
         Livello = milliletri;
     }
 
@@ -24,5 +27,6 @@ public class Serbatoio
     {
         return quantità <= Livello;
     }
+
 
 }

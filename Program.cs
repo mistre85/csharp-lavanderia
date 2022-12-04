@@ -1,9 +1,8 @@
 ﻿
-// il sistema di controllo è il program.cs
-
-Lavanderia lav = new Lavanderia();
 
 bool menu = true;
+
+Lavanderia lav = new Lavanderia();
 
 while (menu)
 {
@@ -16,64 +15,56 @@ while (menu)
 
 
     Console.WriteLine("Digita 'reset' per reinizializzare casualmente il sistema.");
-    Console.WriteLine("Per vedere i dettagli delle macchine digita 'm1' per vedere i dettagli della macchina 1");
+    Console.WriteLine("Digita il numero della macchina per vedere i dettagli");
     Console.WriteLine("Digita 'esci' per chiudere il programma.");
     Console.Write(">");
 
     string sceltaUtente = Console.ReadLine();
 
     if (sceltaUtente == "reset") {
-        //lav.Reset();
-        if (!lav.Next())
-        {
-            Console.WriteLine();
-            Console.WriteLine("Premi invio per continuare...");
-            Console.ReadLine();
-        }
+
+        //try
+        //{
+        lav.Simulazione();
+        //}catch(Exception e)
+        //{
+        //    Console.WriteLine("error: {0}", e.Message);
+
+        Console.WriteLine();
+        Console.WriteLine("Premi invio per continuare...");
+        Console.ReadLine();
+        //}
+
+
+
     }
     else 
     {
-        if (sceltaUtente.Length == 2)
+        Console.Clear();
+
+        try
         {
-            char macchina = sceltaUtente[0];
-            int numero = Convert.ToInt32(sceltaUtente[1].ToString());
 
-            bool numeroMacchinaEsistente = true;
-
-            Console.Clear();
-
-            switch (macchina)
-            {
-                case 'm':
-                    numeroMacchinaEsistente = lav.StampaDettaglioMacchina(numero);
-                    break;
-                default:
-                    numeroMacchinaEsistente = false;
-                    break;
-
-            }
-
-            if (!numeroMacchinaEsistente)
-            {
-                Console.WriteLine("errore: La macchina indicata non esiste, specificare il nome corretto.");
-
-            }
-
+            int numero = Convert.ToInt32(sceltaUtente);
+            lav.StampaDettaglioMacchina(numero);
 
         }
-        else
+        catch (FormatException e)
         {
-            Console.WriteLine("errore: comando sconosciuto");
+            //inserito una lettera invece che un numero
+            Console.WriteLine("Codice macchina non corretto!");
         }
+        catch (Exception e)
+        {
+            Console.WriteLine(e.Message);
+        }
+
 
         Console.WriteLine();
         Console.WriteLine("Premi invio per continuare...");
         Console.ReadLine();
 
     }
-
-
-
 
    
 }

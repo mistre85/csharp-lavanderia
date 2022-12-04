@@ -5,7 +5,7 @@
 public class Asciugatrice : Macchina
 {
 
-    protected override ProgrammaAsciugatura ProgrammaSelezionato
+    public override ProgrammaAsciugatura ProgrammaSelezionato
     {
         get
         {
@@ -39,7 +39,7 @@ public class Asciugatrice : Macchina
 
     }
 
-    public override bool AvviaProgramma()
+    public override void AvviaProgramma()
     {
        
         InFunzione = true;
@@ -47,8 +47,7 @@ public class Asciugatrice : Macchina
         GettoniInseriti += ProgrammaSelezionato.NumeroGettoni;
         
         //inizializzo sul tempo del programma
-        Simulazione(true);
+        Simulazione();
 
-        return true;
     }
 }

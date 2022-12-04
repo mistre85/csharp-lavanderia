@@ -1,30 +1,35 @@
 ﻿
 // il sistema di controllo è il program.cs
 
+using csharp_lavanderia;
+using csharp_lavanderia.Exceptions;
+using System.Data;
 using System.Reflection.PortableExecutable;
 
 public class Lavanderia
 {
     Macchina[] macchine;
 
+    List<Cliente> clienti;
+
     public Lavanderia()
     {
         macchine = new Macchina[10];
+        clienti = new List<Cliente>();
 
         this.Reset();
     }
 
-    public bool StampaDettaglioMacchina(int numero)
+    public void StampaDettaglioMacchina(int numero)
     {
         int index = numero - 1;
         if (index < 0 || index >= macchine.Length)
         {
-            return false;
+            throw new Exception("La macchina specificata non esiste!");
         }
 
         macchine[index].StampaDettaglio();
 
-        return true;
     }
   
 
@@ -47,34 +52,13 @@ public class Lavanderia
     /*
      Simula l'esecuzione di un utilizzo randomico delle macchine
      */
-    public bool Next()
+    public void Simulazione()
     {
-        bool ok = true;
-        //creazione randomica temporanea per test
-        for (int i = 0; i < macchine.Length; i++)
-        {
-            //seleziono e avvio un programma casuale
-            int programmaCasuale = new Random().Next(1, macchine[i].NumeroProgrammiDisponibili);
-            macchine[i].Simulazione();
 
-            if (macchine[i].SelezionaProgramma(programmaCasuale))
-            {
-                if (!macchine[i].AvviaProgramma())
-                {
-                    Console.WriteLine("Il detersivo non è sufficiente, cambia programma!");
-                    ok = false;
-                }
-            }
-            else
-            {
-                Console.WriteLine("La macchina è occupata {0}", i + 1);
-                ok = false;
-            }
-        }
+        Cliente clienteCasuale = clienti[new Random().Next(0, clienti.Count())];
+        Macchina macchinaCasuale = macchine[new Random().Next(0, macchine.Count())];
 
-       
-
-        return ok;
+        clienteCasuale.Usa(macchinaCasuale);
     }
 
     /*
@@ -96,5 +80,15 @@ public class Lavanderia
         {
             macchine[i] = new Asciugatrice();
         }
+
+        for(i=0; i< 20; i++)
+        {
+            clienti.Add(new Cliente());
+        }
+    }
+
+    public static int GeneraGettoni()
+    {
+        return new Random().Next(2,10);
     }
 }

@@ -1,14 +1,15 @@
 ﻿
 // il sistema di controllo è il program.cs
 
+using csharp_lavanderia.Exceptions;
 
 public abstract class Macchina
 {
     protected Programma[] Programmi { get; set; }
 
-    protected virtual Programma ProgrammaSelezionato { get; set; }
-
     private int tempoRimanente;
+
+    public virtual Programma ProgrammaSelezionato { get; protected set; }
 
     public Macchina(int numeroProgrammi)
     {
@@ -16,6 +17,7 @@ public abstract class Macchina
     }
 
     public bool InFunzione { get; protected set; }
+    public bool Aperta { get; private set; }
 
     public int GettoniInseriti { get; protected set; }
 
@@ -51,45 +53,75 @@ public abstract class Macchina
     }
 
 
-    public abstract bool AvviaProgramma();
+    public abstract void AvviaProgramma();
 
-    //selezione e avvio
-    public bool SelezionaProgramma(int numeroProgramma)
+    public void Apri()
     {
-
-        //controllo se posso avviare il programma
-        //e se il programma esiste
-        if(
-            numeroProgramma >= Programmi.Length || numeroProgramma < 1 ||
-            InFunzione
-            
-            )
+        if (InFunzione)
         {
-            return false;
+            throw new MacchinaInFunzioneExcption("La macchina è in funzione, impossibile aprire!");
         }
 
-        //recupero il programma
-        //programma dell'utente - 1 
-        ProgrammaSelezionato = Programmi[numeroProgramma - 1];
-
-        return true;
+        Aperta = true;
     }
 
-    public bool Simulazione(bool init = false)
+    public void Chiudi()
     {
-        if(ProgrammaSelezionato == null)
+        Aperta = false;
+    }
+
+
+    public void InserisciGettoni(int numeroGettoni)
+    {
+        GettoniInseriti += numeroGettoni;
+    }
+
+    //selezione e avvio
+    public void SelezionaProgramma(Programma programma = null)
+    {
+       
+
+        if (InFunzione)
         {
-            return false;
+            throw new MacchinaInFunzioneExcption("La macchina è in funzione, impossibile cambiare programma!");
         }
 
-        //per il momento casuale
-        //lo metto alla fine perchè c'è un comportamento su SET che rende null il programma
-        if (init)//la situazioe iniziale
-            TempoRimanente = new Random().Next(1, ProgrammaSelezionato.Durata + 1);
-        else//situazione intermedia... il tempo scorre durante il lavaggio
-            TempoRimanente = new Random().Next(0,TempoRimanente);
+        if (programma == null)
+        {
+            int numeroProgramma = new Random().Next(0, Programmi.Length - 1);
+            ProgrammaSelezionato = Programmi[numeroProgramma];
+        }
+        else
+        {
+            ProgrammaSelezionato = programma;
+        }
 
-        return true;
+        if (ProgrammaSelezionato.NumeroGettoni > GettoniInseriti)
+        {
+            throw new GettoniInsufficientiException("Per poter selezionare questo programma c'è biosgno di {0}", ProgrammaSelezionato.NumeroGettoni);
+        }
+
+        //quando il programma cambia, possiamo risettare il tempo rimanente del programma
+        TempoRimanente = ProgrammaSelezionato.Durata;
+
+    }
+
+    public virtual void Simulazione()
+    {
+        if (ProgrammaSelezionato == null)
+        {
+            throw new ProgrammaNonSelezionatoException();
+        }
+
+        if (!InFunzione)
+        {
+            throw new MacchinaInFunzioneExcption();
+        }
+
+      
+        TempoRimanente = new Random().Next(0, TempoRimanente);
+
+
     }
 
 
@@ -108,7 +140,7 @@ public abstract class Macchina
 
     public void StampaStato()
     {
-        Console.WriteLine("Stato: {0}", InFunzione ? "Occupata" : "Libera");
+        Console.WriteLine("Stato: {0}, Programma: {1}", InFunzione ? "Occupata" : "Libera", InFunzione ? ProgrammaSelezionato.Nome : "Nessuno");
     }
 
 }
