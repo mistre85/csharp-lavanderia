@@ -1,19 +1,30 @@
 ﻿
 // il sistema di controllo è il program.cs
 
+using ConsoleTables;
 using csharp_lavanderia.Exceptions;
+using System.Reflection.PortableExecutable;
 
 public abstract class Macchina
 {
-    protected Programma[] Programmi { get; set; }
 
-    private int tempoRimanente;
+    public int Numero { get; protected set; }
+
+    public Programma[] ListaProgrammi { get; protected set; }
 
     public virtual Programma ProgrammaSelezionato { get; protected set; }
 
-    public Macchina(int numeroProgrammi)
+    private int tempoRimanente;
+
+    public Macchina(int numero, int numeroProgrammi)
     {
-        Programmi = new Programma[numeroProgrammi];
+        Numero = numero;
+        ListaProgrammi = new Programma[numeroProgrammi];
+
+        //creiamo un pò di entropia
+        Aperta = new Random().Next(2) == 1;
+        GettoniInseriti = new Random().Next(5);
+        
     }
 
     public bool InFunzione { get; protected set; }
@@ -25,7 +36,7 @@ public abstract class Macchina
     {
         get
         {
-            return Programmi.Length;
+            return ListaProgrammi.Length;
         }
     }
 
@@ -53,7 +64,45 @@ public abstract class Macchina
     }
 
 
-    public abstract void AvviaProgramma();
+    public void Avvia()
+    {
+        if (Aperta)
+        {
+            throw new MacchinaApertaException("La macchina è aperta, impossibile avviare!");
+        }
+
+        if (InFunzione)
+        {
+            throw new MacchinaInFunzioneExcption("La macchina è già in funzione! Terminare il programma e riprovare!");
+        }
+
+        if (ProgrammaSelezionato == null)
+        {
+            throw new ProgrammaNonSelezionatoException("Programma non selezionato, impossibile avviare!");
+        }
+
+        if (ProgrammaSelezionato.NumeroGettoni > GettoniInseriti)
+        {
+            throw new GettoniInsufficientiException("I gettoni inseriti non sono sufficienti per avviare il programma selezionato");
+        }
+
+        //?? potremmo anche dire che, essendo classe astratta
+        //questo caricamento dovrebbero deciderlo i figli in caso di override
+        _avvia();
+    }
+
+    protected virtual void _avvia()
+    { 
+        //comportamento di default di tutte le macchine (compresa asciugatrice)
+        InFunzione = true;
+        GettoniInseriti -= ProgrammaSelezionato.NumeroGettoni;
+    }
+
+
+    public void Ferma()
+    {
+        InFunzione = false;
+    }
 
     public void Apri()
     {
@@ -77,70 +126,30 @@ public abstract class Macchina
     }
 
     //selezione e avvio
-    public void SelezionaProgramma(Programma programma = null)
+    public void SelezionaProgramma(int numeroProgramma)
     {
-       
+        //mi serve per tradurre il numero programma umano
+        //con quello dell'indice dell'array
+        numeroProgramma--;
+
+
+        //controllo che il programma sia valido
+        if (numeroProgramma >= ListaProgrammi.Length|| numeroProgramma <0)
+        {
+            throw new ProgrammaSelezionatoInesistenteException("Il programma selezionato è inesistente");
+        }
+
 
         if (InFunzione)
         {
             throw new MacchinaInFunzioneExcption("La macchina è in funzione, impossibile cambiare programma!");
         }
 
-        if (programma == null)
-        {
-            int numeroProgramma = new Random().Next(0, Programmi.Length - 1);
-            ProgrammaSelezionato = Programmi[numeroProgramma];
-        }
-        else
-        {
-            ProgrammaSelezionato = programma;
-        }
-
-        if (ProgrammaSelezionato.NumeroGettoni > GettoniInseriti)
-        {
-            throw new GettoniInsufficientiException("Per poter selezionare questo programma c'è biosgno di {0}", ProgrammaSelezionato.NumeroGettoni);
-        }
-
-        //quando il programma cambia, possiamo risettare il tempo rimanente del programma
-        TempoRimanente = ProgrammaSelezionato.Durata;
+        ProgrammaSelezionato = ListaProgrammi[numeroProgramma];
 
     }
 
-    public virtual void Simulazione()
-    {
-        if (ProgrammaSelezionato == null)
-        {
-            throw new ProgrammaNonSelezionatoException();
-        }
+    public abstract string TabellaProgrammiToString();
 
-        if (!InFunzione)
-        {
-            throw new MacchinaInFunzioneExcption();
-        }
-
-      
-        TempoRimanente = new Random().Next(0, TempoRimanente);
-
-
-    }
-
-
-    public virtual void StampaDettaglio()
-    {
-        StampaStato();
-
-        if (InFunzione)
-        {
-            Console.WriteLine(ProgrammaSelezionato.ToString());
-            Console.WriteLine("Tempo rimanente: {0}", TempoRimanente);
-        }
-
-        
-    }
-
-    public void StampaStato()
-    {
-        Console.WriteLine("Stato: {0}, Programma: {1}", InFunzione ? "Occupata" : "Libera", InFunzione ? ProgrammaSelezionato.Nome : "Nessuno");
-    }
-
+   
 }

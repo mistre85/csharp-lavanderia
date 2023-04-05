@@ -1,6 +1,7 @@
 ﻿
 // il sistema di controllo è il program.cs
 
+using ConsoleTables;
 using csharp_lavanderia;
 using csharp_lavanderia.Exceptions;
 using System.Data;
@@ -10,56 +11,50 @@ public class Lavanderia
 {
     Macchina[] macchine;
 
-    List<Cliente> clienti;
-
     public Lavanderia()
     {
         macchine = new Macchina[10];
-        clienti = new List<Cliente>();
 
         this.Reset();
     }
 
-    public void StampaDettaglioMacchina(int numero)
+    public void StampStato()
     {
-        int index = numero - 1;
-        if (index < 0 || index >= macchine.Length)
+
+        Console.WriteLine(" Stato lavanderia:");
+        var table = new ConsoleTable("Numero","Tipo","Gettoni", "Aperta", "In Funzione", "Programma", "Tempo rimanente","Detersivo", "Ammorbidente");
+
+        foreach(Macchina macchina in macchine)
         {
-            throw new Exception("La macchina specificata non esiste!");
+            string detersivo = "N.N";
+            string ammorbidente = "N.N";
+
+            if(macchina is Lavatrice)
+            {
+                detersivo = ((Lavatrice)macchina).Detersivo.Livello.ToString();
+                ammorbidente = ((Lavatrice)macchina).Ammorbidente.Livello.ToString();
+            }
+
+            table.AddRow(
+                macchina.Numero,
+                macchina.GetType().ToString(),
+                macchina.GettoniInseriti,
+                macchina.Aperta,
+                macchina.InFunzione,
+                macchina.ProgrammaSelezionato?.
+                Nome,
+                macchina.TempoRimanente,
+                detersivo,
+                ammorbidente
+                );
         }
 
-        macchine[index].StampaDettaglio();
+        table.Write();
+
 
     }
+
   
-
-
-    public void StampaStatoGenerale()
-    {
-        Console.WriteLine("Stato Generale delle macchine:");
-        Console.WriteLine();
-
-        for (int i = 0; i < macchine.Length; i++)
-        {
-            Console.Write("{1} {0} - ", (i + 1), macchine[i].GetType().ToString());
-            macchine[i].StampaStato();
-        }
-      
-       
-        Console.WriteLine();
-    }
-
-    /*
-     Simula l'esecuzione di un utilizzo randomico delle macchine
-     */
-    public void Simulazione()
-    {
-
-        Cliente clienteCasuale = clienti[new Random().Next(0, clienti.Count())];
-        Macchina macchinaCasuale = macchine[new Random().Next(0, macchine.Count())];
-
-        clienteCasuale.Usa(macchinaCasuale);
-    }
 
     /*
         reinizializza tutti i macchinari della lavanderia
@@ -67,28 +62,30 @@ public class Lavanderia
     public void Reset()
     {
         int i = 0;
+        
         //creazione randomica temporanea per test
         for (; i < 5; i++)
         {
             //creo una nuova lavatrice con impostazioni di base
-            macchine[i] = new Lavatrice();
+            macchine[i] = new Lavatrice(i+1);
            
         }
 
         //creazione randomica temporanea per test
         for (; i < 10; i++)
         {
-            macchine[i] = new Asciugatrice();
+            macchine[i] = new Asciugatrice(i+1);
         }
 
-        for(i=0; i< 20; i++)
-        {
-            clienti.Add(new Cliente());
-        }
     }
 
-    public static int GeneraGettoni()
+    public Macchina GetMacchina(int numeroMacchina)
     {
-        return new Random().Next(2,10);
+        numeroMacchina--;
+
+        if (numeroMacchina >= macchine.Length || numeroMacchina<0)
+            throw new MacchinaSelezionataInesistenteException();
+
+        return macchine[numeroMacchina];
     }
 }

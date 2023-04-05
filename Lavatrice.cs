@@ -1,10 +1,11 @@
 ﻿
 // il sistema di controllo è il program.cs
 
+using ConsoleTables;
 using csharp_lavanderia.Exceptions;
 
 public class Lavatrice : Macchina
-{   
+{
     public Serbatoio Detersivo { get; private set; }
     public Serbatoio Ammorbidente { get; private set; }
 
@@ -16,42 +17,21 @@ public class Lavatrice : Macchina
         }
     }
 
-    public Lavatrice() : base(3)
+    public Lavatrice(int numero) : base(numero, 3)
     {
-        this.
-        Detersivo = new Serbatoio(1000);
-        Ammorbidente = new Serbatoio(500);
+        Numero = numero;
+       
+        Detersivo = new Serbatoio(new Random().Next(1000),1000);
+        Ammorbidente = new Serbatoio(new Random().Next(500),1000);
 
-        Programmi[0] = new ProgrammaLavaggio("Rifrescante",20,5,20,2);
-        Programmi[1] = new ProgrammaLavaggio("Rinnovante",40,10,40,3);
-        Programmi[2] = new ProgrammaLavaggio("Sgrassante",60,15,60,4);
+        ListaProgrammi[0] = new ProgrammaLavaggio(1,"Rifrescante", 20, 5, 20, 25);
+        ListaProgrammi[1] = new ProgrammaLavaggio(2,"Rinnovante", 40, 10, 40, 50);
+        ListaProgrammi[2] = new ProgrammaLavaggio(3,"Sgrassante", 60, 15, 60, 100);
 
     }
 
-
-    public override void AvviaProgramma()
+    protected override void _avvia()
     {
-
-        if (Aperta)
-        {
-            throw new MacchinaApertaException();
-        }
-
-        if (InFunzione)
-        {
-            throw new MacchinaInFunzioneExcption();
-        }
-
-        if (ProgrammaSelezionato == null)
-        {
-            throw new ProgrammaNonSelezionatoException();
-        }
-
-        if(ProgrammaSelezionato.NumeroGettoni > GettoniInseriti)
-        {
-            throw new GettoniInsufficientiException();
-        }
-
         if (!Detersivo.Disponibile(ProgrammaSelezionato.ConsumoDetersivo))
         {
             throw new DetersivoInsufficienteException();
@@ -65,28 +45,27 @@ public class Lavatrice : Macchina
 
         InFunzione = true;
         GettoniInseriti -= ProgrammaSelezionato.NumeroGettoni;
-
     }
 
-    public override void Simulazione()
+
+    public override string TabellaProgrammiToString()
     {
-        base.Simulazione();
 
-        Detersivo.Consuma(ProgrammaSelezionato.ConsumoDetersivo);
-        Ammorbidente.Consuma(ProgrammaSelezionato.ConsumoAmmorbidente);
+        var table = new ConsoleTable("Numero programma", "Nome programma", "Durata", "Gettoni","Consumo Ammorbidente","Consumo Detersivo");
 
-        
-    }
+        foreach (ProgrammaLavaggio programma in ListaProgrammi)
+        {
+            table.AddRow(
+                programma.Numero,
+                programma.Nome,
+                programma.Durata,
+                programma.NumeroGettoni,
+                programma.ConsumoAmmorbidente,
+                programma.ConsumoDetersivo);
+        }
 
-    public override void StampaDettaglio()
-    {
-        StampaStato();
+        return table.ToString();
 
-        base.StampaDettaglio();
-
-        Console.WriteLine("Ammorbidente disponibile: {0}", Ammorbidente.Livello);
-        Console.WriteLine("Detersivo disponibile: {0}", Detersivo.Livello);
-        Console.WriteLine("Numero Gettoni: {0}", GettoniInseriti);
 
     }
 }

@@ -5,8 +5,8 @@ public class ProgrammaAsciugatura : Programma
 
 
        
-    public ProgrammaAsciugatura(string nome, int durata, int numeroGettoni) : 
-        base(nome, durata, numeroGettoni)
+    public ProgrammaAsciugatura(int numero, string nome, int durata, int numeroGettoni) : 
+        base(numero,nome, durata, numeroGettoni)
     {
 
     }
@@ -17,3 +17,4 @@ public class ProgrammaAsciugatura : Programma
         return "Programma Asciugatura " + Nome;
     }
 }
+

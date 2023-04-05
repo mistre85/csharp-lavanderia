@@ -6,9 +6,9 @@ public class ProgrammaLavaggio : Programma
     public int ConsumoAmmorbidente { get; }
     public int ConsumoDetersivo { get; }
 
-    public ProgrammaLavaggio(string nome, int durata, 
+    public ProgrammaLavaggio(int numero, string nome, int durata, 
         int numeroGettoni, int consumoAmmorbidente, int consumoDetersivo) : 
-        base(nome, durata, numeroGettoni)
+        base(numero, nome, durata, numeroGettoni)
     {
         ConsumoAmmorbidente = consumoAmmorbidente;
         ConsumoDetersivo = consumoDetersivo;

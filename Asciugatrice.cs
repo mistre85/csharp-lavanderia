@@ -2,6 +2,9 @@
 // il sistema di controllo è il program.cs
 
 
+using ConsoleTables;
+using System.Reflection.PortableExecutable;
+
 public class Asciugatrice : Macchina
 {
 
@@ -13,10 +16,10 @@ public class Asciugatrice : Macchina
         }
     }
 
-    public Asciugatrice() : base(2)
+    public Asciugatrice(int numero) : base(numero,2)
     {
-       Programmi[0] = new ProgrammaAsciugatura("Rapido", 20,2);
-       Programmi[1] = new ProgrammaAsciugatura("Intenso", 40,4);
+       ListaProgrammi[0] = new ProgrammaAsciugatura(1,"Rapido", 20,2);
+       ListaProgrammi[1] = new ProgrammaAsciugatura(2,"Intenso", 60,4);
    
     }
 
@@ -25,29 +28,22 @@ public class Asciugatrice : Macchina
         Console.WriteLine("Stato: {0}", InFunzione ? "Occupata" : "Libera");
     }
 
-    public void StampaDettaglio()
-    {
-        StampaStato();
 
-        if (InFunzione)
+    public override string TabellaProgrammiToString()
+    {
+        var table = new ConsoleTable("Numero programma", "Nome programma", "Durata", "Gettoni");
+
+        foreach (ProgrammaAsciugatura programma in ListaProgrammi)
         {
-            Console.WriteLine("Programma in esecuzione: {0}", ProgrammaSelezionato.Nome);
-            Console.WriteLine("Tempo rimanente: {0}", TempoRimanente);
+            table.AddRow(
+                programma.Numero,
+                programma.Nome,
+                programma.Durata,
+                programma.NumeroGettoni);
         }
 
-        Console.WriteLine("Numero Gettoni: {0}", GettoniInseriti);
-
+        return table.ToString();
     }
 
-    public override void AvviaProgramma()
-    {
-       
-        InFunzione = true;
-
-        GettoniInseriti += ProgrammaSelezionato.NumeroGettoni;
-        
-        //inizializzo sul tempo del programma
-        Simulazione();
-
-    }
+   
 }

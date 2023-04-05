@@ -4,20 +4,41 @@
 
 public class Serbatoio 
 {
-    //milliletri disponibili
+
+    //livelloDiPartenza disponibili
     public int Livello { get; private set; }
 
-    public Serbatoio(int milliletri)
+    //stabilisce quale quantità massima questo serbatoio può gestire
+    public int LivelloMassimo;
+
+    public Serbatoio(int livelloDiPartenza, int livelloMassimo)
     {
-        if (milliletri < 0)
+
+        if (livelloDiPartenza <= 0)
+        {
+            throw new QuantitaNegativaException("Non puoi specificare una quantità negativa.");
+        }
+
+        if (livelloDiPartenza <= 0)
+        {
+            throw new QuantitaNegativaException("Non puoi specificare un livello massimo negativo.");
+        }
+
+        if (livelloDiPartenza < 0)
             throw new LivelloNegativoSerbatoioExcpetion();
 
-        Livello = milliletri;
+        Livello = livelloDiPartenza;
+        LivelloMassimo = livelloMassimo;
     }
 
     public void Consuma(int quantità)
     {
-        if(Disponibile(quantità))
+        if (quantità <= 0)
+        {
+            throw new QuantitaNegativaException("Non puoi specificare una quantità negativa.");
+        }
+
+        if (Disponibile(quantità))
         {
             Livello -= quantità;
         }
@@ -25,8 +46,31 @@ public class Serbatoio
 
     public bool Disponibile(int quantità)
     {
+        if (quantità <= 0)
+        {
+            throw new QuantitaNegativaException("Non puoi specificare una quantità negativa.");
+        }
+
         return quantità <= Livello;
     }
 
+    public override string ToString()
+    {
+        return Livello + "ml";
+    }
 
+    public void Ricarica(int quantità)
+    {
+        if(quantità <= 0)
+        {
+            throw new QuantitaNegativaException("Non puoi specificare una quantità negativa.");
+        }
+
+        if(Livello + quantità > LivelloMassimo)
+        {
+            throw new LivelloMassimoSerbatoioException("Livello del serbatoio superato, impossibile ricaricare.");
+        }
+
+        Livello += quantità;
+    }
 }
