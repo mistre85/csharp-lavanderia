@@ -73,7 +73,7 @@ Per la visualizzazione tabellare si utilizzi il pacchetto ConsoleTable:
 
 [https://github.com/khalidabuhakmeh/ConsoleTables](https://github.com/khalidabuhakmeh/ConsoleTables)
 
-### BONUS (implementato in branch simulazione)
+### BONUS
 per rendere il sistema un pò più realistico si gestisca una simulazione del tempo che passa con il seguente comportamento.
 
 1. Richiedere l’input all’utente con il Console.ReadKey();
