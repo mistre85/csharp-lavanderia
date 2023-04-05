@@ -45,5 +45,8 @@ public class Asciugatrice : Macchina
         return table.ToString();
     }
 
-   
+    protected override void _avvia()
+    {
+        //non è necessario fare nulla
+    }
 }

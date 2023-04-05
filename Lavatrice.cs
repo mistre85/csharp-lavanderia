@@ -42,9 +42,9 @@ public class Lavatrice : Macchina
             throw new AmmorbidenteInsufficienteException();
         }
 
-
-        InFunzione = true;
-        GettoniInseriti -= ProgrammaSelezionato.NumeroGettoni;
+        Detersivo.Consuma(ProgrammaSelezionato.ConsumoDetersivo);
+        Ammorbidente.Consuma(ProgrammaSelezionato.ConsumoAmmorbidente);
+       
     }
 
 
