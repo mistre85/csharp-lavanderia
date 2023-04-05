@@ -13,7 +13,7 @@ public class Lavanderia
 
     public Lavanderia()
     {
-        macchine = new Macchina[10];
+        macchine = new Macchina[5];
 
         this.Reset();
     }
@@ -64,7 +64,7 @@ public class Lavanderia
         int i = 0;
         
         //creazione randomica temporanea per test
-        for (; i < 5; i++)
+        for (; i < 3; i++)
         {
             //creo una nuova lavatrice con impostazioni di base
             macchine[i] = new Lavatrice(i+1);
@@ -72,7 +72,7 @@ public class Lavanderia
         }
 
         //creazione randomica temporanea per test
-        for (; i < 10; i++)
+        for (; i < 5; i++)
         {
             macchine[i] = new Asciugatrice(i+1);
         }
@@ -87,5 +87,13 @@ public class Lavanderia
             throw new MacchinaSelezionataInesistenteException();
 
         return macchine[numeroMacchina];
+    }
+
+    public void Simulazione()
+    {
+        foreach(Macchina macchina in macchine)
+        {
+            macchina.Simulazione();
+        }
     }
 }

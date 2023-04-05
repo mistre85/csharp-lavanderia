@@ -14,7 +14,6 @@ public abstract class Macchina
 
     public virtual Programma ProgrammaSelezionato { get; protected set; }
 
-    private int tempoRimanente;
 
     public Macchina(int numero, int numeroProgrammi)
     {
@@ -23,7 +22,7 @@ public abstract class Macchina
 
         //creiamo un pò di entropia
         Aperta = new Random().Next(2) == 1;
-        GettoniInseriti = new Random().Next(5);
+        GettoniInseriti = new Random().Next(15);
         
     }
 
@@ -40,6 +39,8 @@ public abstract class Macchina
         }
     }
 
+
+    private int tempoRimanente;
     public int TempoRimanente
     {
         get
@@ -53,7 +54,7 @@ public abstract class Macchina
             {
                 tempoRimanente = 0;
                 InFunzione = false;
-                //ProgrammaSelezionato = null;
+              
             }
             else
             {
@@ -89,15 +90,18 @@ public abstract class Macchina
         //?? potremmo anche dire che, essendo classe astratta
         //questo caricamento dovrebbero deciderlo i figli in caso di override
         _avvia();
-    }
 
-    protected virtual void _avvia()
-    { 
-        //comportamento di default di tutte le macchine (compresa asciugatrice)
-        InFunzione = true;
+        //se l'avvio avviene corretamente allora possiamo gestire ancora comportamenti comuni
+
         GettoniInseriti -= ProgrammaSelezionato.NumeroGettoni;
+        TempoRimanente = ProgrammaSelezionato.Durata;
+
+        InFunzione = true;
+       
     }
 
+    protected abstract void _avvia();
+    
 
     public void Ferma()
     {
@@ -122,6 +126,11 @@ public abstract class Macchina
 
     public void InserisciGettoni(int numeroGettoni)
     {
+        if(numeroGettoni < 0)
+        {
+            throw new QuantitaNegativaException("Impossibile caricare quantità nulle o negative di gettoni");
+        }
+
         GettoniInseriti += numeroGettoni;
     }
 
@@ -151,5 +160,14 @@ public abstract class Macchina
 
     public abstract string TabellaProgrammiToString();
 
-   
+    public  void Simulazione()
+    {
+        if (InFunzione)
+        {
+            //simuliamo la riduzione di tempo del programma incrementalmente
+            //consapevoli di come è stato ideato il program.cs
+
+            TempoRimanente--;
+        }
+    }
 }

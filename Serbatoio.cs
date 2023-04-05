@@ -61,7 +61,7 @@ public class Serbatoio
 
     public void Ricarica(int quantità)
     {
-        if(quantità <= 0)
+        if(quantità < 0)
         {
             throw new QuantitaNegativaException("Non puoi specificare una quantità negativa.");
         }
